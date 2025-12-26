@@ -1,4 +1,4 @@
-export class ApiResponse<T = unknow> {
+export class ApiResponse<T = unknown> {
   statusCode: number;
   success: boolean;
   message: string;
