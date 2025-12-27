@@ -1,13 +1,12 @@
 import React from 'react'
 
-const page = () => {
+const Home = () => {
   return (
     <div>
     
-    Full stack webapp 
       
     </div>
   )
 }
 
-export default page
+export default Home
