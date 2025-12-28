@@ -1,9 +1,10 @@
 'use client'
 
-import { ArrowLeft, EyeIcon, EyeOff, Key, LogIn, Mail, User, UserRound } from 'lucide-react'
+import { ArrowLeft, EyeIcon, EyeOff, Key, Loader, Loader2, Loader2Icon, LogIn, Mail, User, UserRound } from 'lucide-react'
 import React, { useState } from 'react'
 import { motion } from 'motion/react'
 import Image from 'next/image'
+import axios from 'axios'
 
 
 type PropType = {
@@ -15,6 +16,27 @@ function Registerform({ previousStep }: PropType) {
   const [email, setemail] = useState("")
   const [password, setpassword] = useState("")
   const [showpassword, setshowpassword] = useState(false)
+  const [loading,setloading] = useState(false)
+
+  const handleRequest = async (e:React.FormEvent) => {
+    e.preventDefault()
+    setloading(true)
+    try {
+      const res = await axios.post('/api/auth/register',{
+        name,email,password
+      })
+      console.log(res.data)
+          setloading(false)
+
+      
+    } catch (error) {
+        console.log(error)
+        setloading(false)
+
+    }
+  }
+
+
 
   return (
     <div className="min-h-screen bg-white p-8 relative flex items-center justify-center">
@@ -48,7 +70,7 @@ function Registerform({ previousStep }: PropType) {
         </p>
 
         {/* Form */}
-        <motion.form
+        <motion.form onSubmit={handleRequest}
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
@@ -110,15 +132,18 @@ function Registerform({ previousStep }: PropType) {
     return (
       <button
         type="submit"
-        disabled={!formValidate}
-        className={` w-full py-2 rounded-xl font-semibold transition-all duration-200
+        disabled={!formValidate || loading}
+        className={` w-full py-2 rounded-xl font-semibold transition-all  duration-200
           ${formValidate
-            ? "bg-purple-600 text-white hover:bg-purple-700 cursor-pointer"
+            ? "bg-purple-600 text-white hover:bg-purple-700 flex iteams-center justify-center cursor-pointer"
             : "bg-gray-200 text-gray-400 cursor-not-allowed"
           }
         `}
       >
-        Register
+        {
+          loading ? <Loader2 className='w-5 h-5 animate-spin ' /> : "Register"
+        }
+        
       </button>
     )
   })()
