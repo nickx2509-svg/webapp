@@ -144,9 +144,10 @@ function Login() {
 
   </div>
 
- <button
-  type="button"
-  className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-50 transition"
+ <button  
+  onClick={() => signIn("google")}
+type="button"
+  className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-50 transition hover:cursor-pointer"
 >
   <Image
     src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

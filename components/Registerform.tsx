@@ -6,6 +6,7 @@ import { motion } from 'motion/react'
 import Image from 'next/image'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 
 
 type PropType = {
@@ -159,8 +160,9 @@ function Registerform({ previousStep }: PropType) {
   </div>
 
  <button
+ onClick={() => signIn("google")}
   type="button"
-  className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-50 transition"
+  className="w-full flex items-center hover:cursor-pointer justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-50 transition"
 >
   <Image
     src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

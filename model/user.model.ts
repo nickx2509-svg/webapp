@@ -4,9 +4,10 @@ import bcrypt from "bcryptjs";
 interface UserI extends Document {
   name: string;
   email: string;
-  password: string;
+  password?: string;
   mobile?: string
   role : "user" | "deliveryBoy" | "admin"
+  image?:string 
 }
 
 const UserSchema = new Schema<UserI>(
@@ -24,7 +25,7 @@ const UserSchema = new Schema<UserI>(
     password: {
       type: String,
       select: false,
-      required: true,
+      required: false,
     },
     mobile:{
       type: String,
@@ -32,6 +33,9 @@ const UserSchema = new Schema<UserI>(
     role: {
       type:String,
       enum:["user","deliveryBoy","admin"]
+    },
+    image:{
+      type:String
     }
   },
   { timestamps: true }
