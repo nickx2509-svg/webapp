@@ -1,56 +1,51 @@
 'use client'
 
-import { ArrowLeft, EyeIcon, EyeOff, Key, Loader, Loader2, Loader2Icon, LogIn, Mail, User, UserRound } from 'lucide-react'
+import { ArrowLeft, EyeIcon, EyeOff, Key, Loader, Loader2, Loader2Icon, LogIn, Mail, User, UserCheck, UserRound } from 'lucide-react'
 import React, { useState } from 'react'
 import { motion } from 'motion/react'
 import Image from 'next/image'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { signIn, useSession } from 'next-auth/react'
 
 
-type PropType = {
-  previousStep: (s: number) => void
-}
 
-function Registerform({ previousStep }: PropType) {
-  const [name, setname] = useState("")
+
+
+function Login() {
   const [email, setemail] = useState("")
   const [password, setpassword] = useState("")
   const [showpassword, setshowpassword] = useState(false)
   const [loading,setloading] = useState(false)
-  const navigate = useRouter()
 
-  const handleRequest = async (e:React.FormEvent) => {
+  const navigate = useRouter()
+  const session = useSession()
+  console.log(session)
+
+  const handleLogin = async (e:React.FormEvent) => {
     e.preventDefault()
     setloading(true)
     try {
-      const res = await axios.post('/api/auth/register',{
-        name,email,password
-      })
-      console.log(res.data)
-          setloading(false)
-
-      
+        await signIn("credentials",{
+          email,password
+        })
+        setloading(false)
     } catch (error) {
-        console.log(error)
+      console.log(error)
         setloading(false)
 
+      
     }
   }
 
+  
+    
 
 
   return (
     <div className="min-h-screen bg-white p-8 relative flex items-center justify-center">
       
-      {/* Back button */}
-      <button
-        onClick={() => previousStep(1)}
-        className="absolute top-6 left-6 flex items-center gap-2 text-purple-600 font-medium hover:text-purple-700"
-      >
-        <ArrowLeft className="w-5 h-5" />
-        Back
-      </button>
+     
 
       {/* Centered content */}
       <div className="flex flex-col items-center text-center gap-4 w-full">
@@ -62,33 +57,24 @@ function Registerform({ previousStep }: PropType) {
           transition={{ duration: 0.8 }}
           className="text-3xl md:text-4xl text-purple-500 font-bold"
         >
-          Create An Account
+          Welcome Back
         </motion.h1>
 
         {/* Subtitle */}
         <p className="text-gray-500 max-w-sm flex items-center justify-center gap-1 text-sm">
-          Join Zepto for making your home smarter than your neighbour
+          Login to Zepto 
           <UserRound className="w-4 h-4 text-purple-500" />
         </p>
 
         {/* Form */}
-        <motion.form onSubmit={handleRequest}
+        <motion.form onSubmit={handleLogin} 
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="flex flex-col w-full max-w-sm gap-5 mt-4"
         >
           {/* Name */}
-          <div className="relative">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500" />
-            <input
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(e) => setname(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 py-3 pl-12 pr-4 text-sm outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition"
-            />
-          </div>
+          
 
           {/* Email */}
           <div className="relative">
@@ -129,7 +115,7 @@ function Registerform({ previousStep }: PropType) {
 
        {
   (() => {
-    const formValidate = name.trim() !== "" && email.trim() !== "" && password.trim() !== ""
+    const formValidate =  email.trim() !== "" && password.trim() !== ""
 
     return (
       <button
@@ -143,7 +129,7 @@ function Registerform({ previousStep }: PropType) {
         `}
       >
         {
-          loading ? <Loader2 className='w-5 h-5 animate-spin ' /> : "Register"
+          loading ? <Loader2 className='w-5 h-5 animate-spin ' /> : "Login"
         }
         
       </button>
@@ -174,10 +160,10 @@ function Registerform({ previousStep }: PropType) {
 </button>
         </motion.form>
        <p className="mt-6 flex items-center gap-1 text-sm text-gray-600">
-  Already have an account?
-  <span onClick={() => navigate.push('/login')} className="flex items-center gap-1 text-purple-600 hover:text-purple-700 cursor-pointer font-medium">
-    <LogIn className="w-4 h-4" />
-    Sign in
+  create an Account
+  <span onClick={() => navigate.push('/register')}  className="flex items-center gap-1 text-purple-600 hover:text-purple-700 cursor-pointer font-medium">
+    <UserCheck className="w-4 h-4" />
+    create account
   </span>
 </p>
 
@@ -186,4 +172,4 @@ function Registerform({ previousStep }: PropType) {
   )
 }
 
-export default Registerform
+export default Login
