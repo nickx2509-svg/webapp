@@ -21,23 +21,38 @@ function Registerform({ previousStep }: PropType) {
   const [loading,setloading] = useState(false)
   const navigate = useRouter()
 
-  const handleRequest = async (e:React.FormEvent) => {
-    e.preventDefault()
-    setloading(true)
-    try {
-      const res = await axios.post('/api/auth/register',{
-        name,email,password
-      })
-      console.log(res.data)
-          setloading(false)
+  const handleRequest = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setloading(true);
 
-      
-    } catch (error) {
-        console.log(error)
-        setloading(false)
+  try {
+    // 1️⃣ Register user (axios)
+    await axios.post("/api/auth/register", {
+      name,
+      email,
+      password,
+    });
 
+    // 2️⃣ Sign in (NextAuth)
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (result?.ok) {
+      navigate.push("/");
+    } else {
+      console.log("Login failed:", result?.error);
     }
+
+  } catch (error) {
+    console.log("Register error:", error);
+  } finally {
+    setloading(false);
   }
+};
+
 
 
 
@@ -160,7 +175,7 @@ function Registerform({ previousStep }: PropType) {
   </div>
 
  <button
- onClick={() => signIn("google")}
+ onClick={() => signIn("google",{callbackUrl:'/'})}
   type="button"
   className="w-full flex items-center hover:cursor-pointer justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-50 transition"
 >

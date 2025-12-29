@@ -26,9 +26,14 @@ function Login() {
     e.preventDefault()
     setloading(true)
     try {
-        await signIn("credentials",{
-          email,password
+        const res = await signIn("credentials",{
+          email,password,redirect: false,
+
         })
+        if(res?.ok){
+          navigate.push("/")
+        }
+
         setloading(false)
     } catch (error) {
       console.log(error)
@@ -145,7 +150,7 @@ function Login() {
   </div>
 
  <button  
-  onClick={() => signIn("google")}
+  onClick={() => signIn("google",{callbackUrl:'/'})}
 type="button"
   className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-xl py-3 hover:bg-gray-50 transition hover:cursor-pointer"
 >
