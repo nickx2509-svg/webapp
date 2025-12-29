@@ -1,20 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { ApiError } from "./ApiError";
 
-type AsyncFn<T = unknown> = () => Promise<T>;
-
 export const asyncHandler =
-  (fn: AsyncFn) =>
-  async () => {
+  (handler: (req: NextRequest) => Promise<Response>) =>
+  async (req: NextRequest) => {
     try {
-      return await fn();
-    } catch (error: unknown) {
+      return await handler(req);
+    } catch (error: any) {
       if (error instanceof ApiError) {
         return NextResponse.json(
           {
             success: false,
             message: error.message,
-            errors: error.errors,
           },
           { status: error.statusCode }
         );
