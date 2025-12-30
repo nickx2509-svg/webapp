@@ -27,9 +27,11 @@ const Home = async () => {
     return <EditRoleAndMobile />
   }
 
+  const plainUser = JSON.parse(JSON.stringify( user ))
+  
   return (
     <>
-      <Nav user={ user } />
+      <Nav user={ plainUser } />
     </>
   )
 }
