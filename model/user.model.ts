@@ -5,9 +5,9 @@ interface UserI extends Document {
   name: string;
   email: string;
   password?: string;
-  mobile?: string
-  role : "user" | "deliveryBoy" | "admin"
-  image?:string 
+  mobile?: string;
+  role: "user" | "deliveryBoy" | "admin";
+  image?: string;
 }
 
 const UserSchema = new Schema<UserI>(
@@ -20,34 +20,34 @@ const UserSchema = new Schema<UserI>(
     email: {
       type: String,
       required: true,
-      unique:true
+      unique: true,
     },
     password: {
       type: String,
       select: false,
       required: false,
     },
-    mobile:{
+    mobile: {
       type: String,
     },
     role: {
-      type:String,
-      enum:["user","deliveryBoy","admin"]
+      type: String,
+      enum: ["user", "deliveryBoy", "admin"],
     },
-    image:{
-      type:String
-    }
+    image: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
 
-UserSchema.pre("save", async function (){
-  if(!this.isModified("password")){
+UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) {
     return;
   }
-      this.password = await bcrypt.hash(this.password,10)
-})
+  if (!this.password) return;
+  this.password = await bcrypt.hash(this.password, 10);
+});
 
-
-const User = mongoose.models.User || mongoose.model("User", UserSchema)
-export default User
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
+export default User;
