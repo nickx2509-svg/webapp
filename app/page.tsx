@@ -1,6 +1,9 @@
 import { auth } from '@/auth'
+import AdminDashboard from '@/components/AdminDashboard'
+import DeliveryBoyDashboard from '@/components/DeliveryBoyDashboard'
 import EditRoleAndMobile from '@/components/EditRoleAndMobile'
 import Nav from '@/components/Nav'
+import UserDashboard from '@/components/UserDashboard'
 import connectDB from '@/lib/db'
 import User from '@/model/user.model'
 import { redirect } from 'next/navigation'
@@ -32,6 +35,12 @@ const Home = async () => {
   return (
     <>
       <Nav user={ plainUser } />
+      {
+        user.role =="user" ? (
+          <UserDashboard />
+        ) : user.role == "admin"? (
+          <AdminDashboard />
+        ) : <DeliveryBoyDashboard />      }
     </>
   )
 }
