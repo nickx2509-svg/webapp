@@ -19,9 +19,7 @@ export async function POST(request: Request) {
       throw new ApiError(400, "Password must be at least 8 characters");
     }
 
-    if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
-    ) {
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)) {
       throw new ApiError(400, "Invalid email address");
     }
 
