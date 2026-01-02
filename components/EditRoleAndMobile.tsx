@@ -5,8 +5,10 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 function EditRoleAndMobile() {
+  const {update} = useSession()
   const router = useRouter()
 
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
@@ -35,6 +37,7 @@ function EditRoleAndMobile() {
         role: selectedRole,
         mobile,
       })
+      await update({role:selectedRole})
 
       setMessage('Profile updated successfully ')
 

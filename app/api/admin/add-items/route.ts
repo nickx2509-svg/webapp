@@ -26,7 +26,7 @@ export const POST = asyncHandler(async (req: NextRequest) => {
   if (!imageUrl) {
     throw new ApiError(400, "Image uplaod Failed");
   }
-  const groceery = await Grocery.create({
+  const grocery = await Grocery.create({
     name,
     category,
     price,
@@ -34,6 +34,6 @@ export const POST = asyncHandler(async (req: NextRequest) => {
     image: imageUrl,
   });
   return NextResponse.json(
-    new ApiResponse(201, groceery, "Itema added successfully")
+    new ApiResponse(201, grocery, "Itema added successfully")
   );
 });

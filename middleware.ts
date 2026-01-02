@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Public routes
   const publicRoutes = [
     "/login",
     "/register",
@@ -12,36 +13,42 @@ export async function middleware(req: NextRequest) {
     "/favicon.ico",
   ];
 
-  // allow public routes
   if (publicRoutes.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
-  // get token
   const token = await getToken({
     req,
     secret: process.env.AUTH_SECRET,
   });
 
-  if (pathname === "/" && !token) {
+  // 🔐 Not logged in → redirect to login
+  if (!token) {
     const loginUrl = new URL("/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", "/");
+    loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  const role = token.role;
+
+  // 🧑 User routes
+  if (pathname.startsWith("/user") && role !== "user") {
+    return NextResponse.redirect(new URL("/unauthorised", req.url));
+  }
+
+  // 🚚 Delivery routes
+  if (pathname.startsWith("/deliver") && role !== "deliveryBoy") {
+    return NextResponse.redirect(new URL("/unauthorised", req.url));
+  }
+
+  // 🛠 Admin routes
+  if (pathname.startsWith("/admin") && role !== "admin") {
+    return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (Next.js static files)
-     * - _next/image (Next.js image optimization files)
-     * - favicon.ico (favicon file)
-     * - Any file with a file extension (e.g., .png, .jpg, .css)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };
