@@ -3,6 +3,7 @@ import AdminDashboard from '@/components/AdminDashboard'
 import DeliveryBoyDashboard from '@/components/DeliveryBoyDashboard'
 import EditRoleAndMobile from '@/components/EditRoleAndMobile'
 import Nav from '@/components/Nav'
+import SliderCategory from '@/components/SliderCategory'
 import UserDashboard from '@/components/UserDashboard'
 import connectDB from '@/lib/db'
 import User from '@/model/user.model'
@@ -37,7 +38,10 @@ const Home = async () => {
       <Nav user={ plainUser } />
       {
         user.role =="user" ? (
+          <>
           <UserDashboard />
+          <SliderCategory />
+          </>
         ) : user.role == "admin"? (
           <AdminDashboard />
         ) : <DeliveryBoyDashboard />      }

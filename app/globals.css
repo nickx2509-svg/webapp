@@ -1,1 +1,18 @@
 @import "tailwindcss";
+/* Hide scrollbar but allow scroll */
+.slider {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 1rem;
+}
+
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+.slider {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
