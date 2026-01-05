@@ -6,7 +6,7 @@ import { Document } from "mongoose"
 import Link from "next/link"
 import { Search, ShoppingCart, User, Package2Icon, LogOutIcon, PlusCircle, LayoutDashboard, ClipboardList, Menu, X } from "lucide-react"
 import Image from "next/image"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion } from "framer-motion" // Note: Changed to framer-motion as it's the standard package name
 import { signOut } from "next-auth/react"
 
 interface UserI extends Document {
@@ -38,6 +38,15 @@ function Nav({ user }: { user: UserI }) {
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
+
+  // Optimized Logout Handler to solve the JSON error
+  const handleLogout = async () => {
+    setOpen(false);
+    await signOut({ 
+      callbackUrl: "/login", 
+      redirect: true 
+    });
+  }
 
   const Avatar = ({ size = 44 }: { size?: number }) =>
     user.image ? (
@@ -95,10 +104,10 @@ function Nav({ user }: { user: UserI }) {
             <Link href="/admin/add-grocery" className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold rounded-full bg-white text-purple-700 hover:bg-purple-50 transition uppercase tracking-tighter">
               <PlusCircle className="w-3 h-3" /> Add
             </Link>
-            <Link href="/admin/groceries" className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold rounded-full bg-white text-purple-700 hover:bg-purple-50 transition uppercase tracking-tighter">
+            <Link href="/admin/add-grocery" className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold rounded-full bg-white text-purple-700 hover:bg-purple-50 transition uppercase tracking-tighter">
               <ClipboardList className="w-3 h-3" /> View
             </Link>
-            <Link href="/admin/orders" className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold rounded-full bg-purple-800 text-white hover:bg-purple-900 transition uppercase tracking-tighter">
+            <Link href="/admin/add-grocery" className="flex items-center gap-1 px-3 py-1.5 text-[11px] font-bold rounded-full bg-purple-800 text-white hover:bg-purple-900 transition uppercase tracking-tighter">
               <LayoutDashboard className="w-3 h-3" /> Orders
             </Link>
           </div>
@@ -173,10 +182,10 @@ function Nav({ user }: { user: UserI }) {
                   </Link>
                 )}
 
-                {/* Logout */}
+                {/* Logout - Fixed Logic */}
                 <button
-                  onClick={() => { setOpen(false); signOut({ callbackUrl: "/login" }); }}
-                  className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl hover:bg-red-50 text-red-600 transition cursor-pointer"
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl hover:bg-red-50 text-red-600 transition cursor-pointer border-none outline-none"
                 >
                   <LogOutIcon className="w-4 h-4" />
                   <span className="text-sm font-semibold">Sign Out</span>

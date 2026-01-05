@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useRef, useEffect } from "react"
 import { motion } from "framer-motion"
 import {
   ShoppingBasket,
@@ -10,6 +10,10 @@ import {
   Coffee,
   IceCream,
   Pizza,
+  Shirt,
+  Smartphone,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 
 const categories = [
@@ -29,11 +33,6 @@ const categories = [
     color: "bg-orange-100 text-orange-700",
   },
   {
-    name: "Snacks & Munchies",
-    icon: Cookie,
-    color: "bg-yellow-100 text-yellow-700",
-  },
-  {
     name: "Bakery & Biscuits",
     icon: Pizza,
     color: "bg-red-100 text-red-700",
@@ -43,55 +42,107 @@ const categories = [
     icon: Coffee,
     color: "bg-purple-100 text-purple-700",
   },
+  {
+    name: "Fashion & Clothing",
+    icon: Shirt,
+    color: "bg-pink-100 text-pink-700",
+  },
+  {
+    name: "Electronics & Gadgets",
+    icon: Smartphone,
+    color: "bg-slate-100 text-slate-700",
+  },
 ]
 
 function SliderCategory() {
+  const sliderRef = useRef<HTMLDivElement | null>(null)
+
+  // manual scroll
+  const scrollLeft = () => {
+    sliderRef.current?.scrollBy({ left: -200, behavior: "smooth" })
+  }
+
+  const scrollRight = () => {
+    sliderRef.current?.scrollBy({ left: 200, behavior: "smooth" })
+  }
+
+  // auto slide every 4 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!sliderRef.current) return
+
+      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current
+
+      if (scrollLeft + clientWidth >= scrollWidth - 10) {
+        // go back to start
+        sliderRef.current.scrollTo({ left: 0, behavior: "smooth" })
+      } else {
+        sliderRef.current.scrollBy({ left: 200, behavior: "smooth" })
+      }
+    }, 4000)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <motion.section
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.6 }}
       className="bg-white py-16"
     >
       <div className="max-w-7xl mx-auto px-4">
-        {/* Centered Heading */}
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 flex items-center justify-center gap-3 mb-12">
+        {/* Heading */}
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 flex items-center justify-center gap-3 mb-10">
           <span className="bg-purple-600 p-3 rounded-xl shadow-md">
             <ShoppingBasket className="text-white w-6 h-6" />
           </span>
           Shop By Category
         </h2>
 
-        {/* Centered Grid / Slider */}
-        <motion.div
-          className="flex justify-center"
-          drag="x"
-          dragConstraints={{ left: -300, right: 0 }}
-        >
-          <div className="flex gap-6">
-            {categories.map((cat, index) => {
-              const Icon = cat.icon
+        {/* Mobile buttons */}
+        <div className="flex justify-between items-center mb-4 md:hidden">
+          <button onClick={scrollLeft} className="p-2 rounded-full bg-gray-100">
+            <ChevronLeft />
+          </button>
+          <button onClick={scrollRight} className="p-2 rounded-full bg-gray-100">
+            <ChevronRight />
+          </button>
+        </div>
 
-              return (
-                <motion.div
-                  key={index}
-                  whileHover={{ y: -6 }}
-                  className="cursor-pointer"
+        {/* Slider */}
+        <div
+          ref={sliderRef}
+          className="
+            flex gap-6
+            overflow-x-auto
+            scroll-smooth
+            md:justify-center
+            md:overflow-visible
+            scrollbar-hide
+          "
+        >
+          {categories.map((cat, index) => {
+            const Icon = cat.icon
+            return (
+              <motion.div
+                key={index}
+                whileHover={{ y: -6 }}
+                className="flex-shrink-0 cursor-pointer"
+              >
+                <div
+                  className={`w-36 h-36 md:w-40 md:h-40 rounded-3xl flex flex-col items-center justify-center gap-3 shadow-sm ${cat.color}`}
                 >
-                  <div
-                    className={`w-36 h-36 md:w-40 md:h-40 rounded-3xl flex flex-col items-center justify-center gap-3 shadow-sm transition-all ${cat.color}`}
-                  >
-                    <Icon className="w-10 h-10" />
-                    <p className="text-sm font-semibold text-center px-2">
-                      {cat.name}
-                    </p>
-                  </div>
-                </motion.div>
-              )
-            })}
-          </div>
-        </motion.div>
+                  <Icon className="w-10 h-10" />
+                  <p className="text-sm font-semibold text-center px-2">
+                    {cat.name}
+                  </p>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
       </div>
     </motion.section>
   )
