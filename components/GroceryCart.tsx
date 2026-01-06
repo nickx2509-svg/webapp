@@ -4,6 +4,9 @@ import React from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { IndianRupee, Plus } from "lucide-react"
+import { useDispatch } from "react-redux"
+import { AppDispatch } from "@/redux/store"
+import { addToCart } from "@/redux/cartSlice"
 
 interface ItemsI {
   name: string
@@ -18,6 +21,7 @@ type GroceryCartProps = {
 }
 
 function GroceryCart({ items }: GroceryCartProps) {
+  const dispatch = useDispatch<AppDispatch>()
   return (
     <motion.div
       whileHover={{ y: -4, shadow: "0 12px 20px -5px rgba(0,0,0,0.08)" }}
@@ -71,7 +75,7 @@ function GroceryCart({ items }: GroceryCartProps) {
           </div>
 
           {/* Zepto-style Wide Add Button */}
-          <button className="flex items-center justify-center gap-1 bg-white border border-purple-200 text-purple-600 hover:bg-purple-600 hover:text-white transition-all px-4 py-1.5 rounded-xl font-bold text-[12px] shadow-sm active:scale-95">
+          <button className="flex items-center justify-center gap-1 bg-white border border-purple-200 text-purple-600 hover:bg-purple-600 hover:text-white transition-all px-4 py-1.5 rounded-xl font-bold text-[12px] shadow-sm active:scale-95" onClick={() => dispatch(addToCart({...items,quantity:1})) } >
             ADD
             <Plus className="w-3.5 h-3.5 stroke-[3]" />
           </button>

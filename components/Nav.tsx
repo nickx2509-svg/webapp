@@ -8,6 +8,8 @@ import { Search, ShoppingCart, User, Package2Icon, LogOutIcon, PlusCircle, Layou
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion" // Note: Changed to framer-motion as it's the standard package name
 import { signOut } from "next-auth/react"
+import { useSelector } from "react-redux"
+import { RootState } from "@/redux/store"
 
 interface UserI extends Document {
   name: string
@@ -23,6 +25,7 @@ function Nav({ user }: { user: UserI }) {
   const [mounted, setMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
+  const {cartData} = useSelector((state:RootState) => state.cart)
 
   // Ensure portal only renders on the client
   useEffect(() => {
@@ -93,7 +96,7 @@ function Nav({ user }: { user: UserI }) {
           >
             <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
             <span className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 text-[10px] md:text-xs flex items-center justify-center rounded-full bg-purple-600 text-white font-bold">
-              0
+              {cartData.length}
             </span>
           </Link>
         )}
