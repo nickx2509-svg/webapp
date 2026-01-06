@@ -3,12 +3,14 @@
 import React from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
-import { IndianRupee, Plus } from "lucide-react"
-import { useDispatch } from "react-redux"
-import { AppDispatch } from "@/redux/store"
-import { addToCart } from "@/redux/cartSlice"
+import { IndianRupee, Minus, PlusIcon } from "lucide-react"
+import { useDispatch, useSelector } from "react-redux"
+import { AppDispatch, RootState } from "@/redux/store"
+import { addToCart, increaseQty, decreaseQty } from "@/redux/cartSlice"
+import mongoose from "mongoose"
 
 interface ItemsI {
+  _id?: mongoose.Types.ObjectId
   name: string
   category: string
   price: number
@@ -22,63 +24,85 @@ type GroceryCartProps = {
 
 function GroceryCart({ items }: GroceryCartProps) {
   const dispatch = useDispatch<AppDispatch>()
+  const { cartData } = useSelector((state: RootState) => state.cart)
+
+  const cartItem = cartData.find(i => i._id == items._id)
+
   return (
     <motion.div
-      whileHover={{ y: -4, shadow: "0 12px 20px -5px rgba(0,0,0,0.08)" }}
-      className="group relative bg-white rounded-2xl border border-gray-200 shadow-sm transition-all duration-300 w-[280px] sm:w-[320px] flex h-[160px] overflow-hidden p-2"
+      whileHover={{ y: -4 }}
+      className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition w-[260px] p-2 flex gap-2"
     >
-      {/* Left Side: Square Product Image */}
-      <div className="relative w-32 h-full bg-white rounded-xl flex-shrink-0 flex items-center justify-center border border-gray-50">
+      {/* Image */}
+      <div className="relative w-24 h-24 rounded-lg flex items-center justify-center shrink-0">
         <Image
           src={items.image}
           alt={items.name}
           fill
-          className="object-contain p-3 transition-transform duration-500 group-hover:scale-105"
+          className="object-contain p-2"
         />
-        
-        {/* Subtle Timer Badge */}
-        <div className="absolute top-1 left-1 bg-white/80 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-gray-100 shadow-xs">
-          <p className="text-[9px] font-bold text-gray-700 flex items-center gap-0.5">
-            <span className="text-purple-600">⚡</span> 10m
-          </p>
-        </div>
+        <span className="absolute top-1 left-1 text-[9px] font-bold bg-white/90 px-1 rounded text-purple-600">
+          ⚡ 10m
+        </span>
       </div>
 
-      {/* Right Side: Content Area */}
-      <div className="flex flex-col flex-grow pl-3 pr-1 py-1 justify-between">
+      {/* Content */}
+      <div className="flex flex-col justify-between flex-1">
         <div>
-          {/* Category Tag */}
-          <span className="text-[9px] font-extrabold text-purple-600 uppercase tracking-wider">
+          <p className="text-[9px] font-bold text-purple-600 uppercase">
             {items.category || "Fresh"}
-          </span>
+          </p>
 
-          {/* Product Name */}
-          <h3 className="text-[14px] font-bold text-gray-900 leading-tight line-clamp-2 mt-0.5">
+          <h3 className="text-[13px] font-semibold text-gray-900 leading-tight line-clamp-2">
             {items.name}
           </h3>
 
-          {/* Unit */}
-          <p className="text-[11px] text-gray-500 font-semibold mt-1">
-            {items.unit}
-          </p>
+          <p className="text-[11px] text-gray-500">{items.unit}</p>
         </div>
 
-        {/* Bottom Row: Price & Add Button */}
-        <div className="flex items-end justify-between">
-          <div className="flex flex-col">
-            <div className="flex items-center text-base font-black text-gray-900">
-              <IndianRupee className="w-3.5 h-3.5 stroke-[3]" />
-              <span>{items.price}</span>
+        {/* Price + Action */}
+        <div className="flex items-center justify-between mt-1">
+          <div>
+            <div className="flex items-center text-sm font-extrabold text-gray-900">
+              <IndianRupee className="w-3 h-3 stroke-[3]" />
+              {items.price}
             </div>
-            {/* Discounted price */}
-            <span className="text-[10px] text-gray-400 line-through">₹{items.price + 12}</span>
+            <span className="text-[10px] text-gray-400 line-through">
+              ₹{items.price + 12}
+            </span>
           </div>
 
-          {/* Zepto-style Wide Add Button */}
-          <button className="flex items-center justify-center gap-1 bg-white border border-purple-200 text-purple-600 hover:bg-purple-600 hover:text-white transition-all px-4 py-1.5 rounded-xl font-bold text-[12px] shadow-sm active:scale-95" onClick={() => dispatch(addToCart({...items,quantity:1})) } >
-            ADD
-            <Plus className="w-3.5 h-3.5 stroke-[3]" />
-          </button>
+          {/* Cart Actions */}
+          {!cartItem ? (
+            <button
+              className="border border-purple-300 text-purple-600 text-[11px] font-bold px-3 py-1 rounded-lg hover:bg-purple-600 hover:text-white transition active:scale-95"
+              onClick={() =>
+                dispatch(addToCart({ ...items, quantity: 1 }))
+              }
+            >
+              ADD
+            </button>
+          ) : (
+            <div className="flex items-center bg-purple-600 text-white rounded-lg px-2 py-1 gap-2">
+              <button
+                onClick={() => dispatch(decreaseQty(String(cartItem._id)))}
+                className="active:scale-90"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+
+              <span className="text-xs font-bold">
+                {cartItem.quantity}
+              </span>
+
+              <button
+                onClick={() => dispatch(increaseQty(String(cartItem._id)))}
+                className="active:scale-90"
+              >
+                <PlusIcon className="w-3 h-3" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
