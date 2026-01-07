@@ -91,7 +91,7 @@ function Nav({ user }: { user: UserI }) {
         {/* User Cart */}
         {user.role === "user" && (
           <Link
-            href="/"
+            href="/cart"
             className="relative w-9 h-9 md:w-11 md:h-11 flex items-center justify-center bg-white rounded-full shadow-md hover:scale-105 transition"
           >
             <ShoppingCart className="w-4 h-4 md:w-5 md:h-5 text-purple-600" />
