@@ -7,10 +7,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/redux/store'
 import Image from 'next/image'
 import { decreaseQty, increaseQty, removeFromCart } from '@/redux/cartSlice'
+import { useRouter } from 'next/navigation'
 
 function Cart() {
   const { cartData, subTotal, finalTotal, deliveryFee } = useSelector((state: RootState) => state.cart)
   const dispatch = useDispatch<AppDispatch>()
+
+  const naviagte = useRouter()
 
   return (
     <div className='max-w-6xl mx-auto px-4 py-10 min-h-screen'>
@@ -134,13 +137,11 @@ function Cart() {
                   </div>
                 </div>
 
-                <button className='w-full bg-gray-900 text-white py-4 rounded-2xl font-bold mt-4 hover:bg-purple-600 transition-all active:scale-[0.98] shadow-lg'>
-                  Checkout Now
+                <button onClick={()=>naviagte.push("/checkout")}  className='w-full bg-gray-900 text-white py-4 rounded-2xl font-bold mt-4 hover:bg-purple-600 transition-all active:scale-[0.98] shadow-lg'>
+                 CheckOut
                 </button>
                 
-                <p className='text-[10px] text-center text-gray-400 mt-4 uppercase tracking-widest'>
-                  Secure Checkout Powered by Redux
-                </p>
+               
               </div>
             </motion.div>
           </div>
