@@ -3,6 +3,8 @@ import "./globals.css";
 import Provider from "@/components/Provider";
 import StoreProvider from "@/redux/StoreProvider";
 import InitUser from "@/InitUser";
+import 'leaflet/dist/leaflet.css'
+
 
 
 export const metadata: Metadata = {
