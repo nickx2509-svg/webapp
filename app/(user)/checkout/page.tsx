@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { MapPin, Phone, User, Home, Code, LocateFixedIcon, LocateIcon } from 'lucide-react'
+import { MapPin, Phone, User, Home, Code, LocateFixedIcon, LocateIcon, CreditCard, WalletCards, IndianRupee, Truck } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/redux/store'
 import dynamic from 'next/dynamic'
@@ -17,6 +17,7 @@ const markerIcon = new L.Icon({
 
 export default function CheckOut() {
   const { userData } = useSelector((state: RootState) => state.user)
+  const { subTotal,deliveryFee,finalTotal } = useSelector((state: RootState) => state.cart)
 
   const [address, setAddress] = useState({
     fullName: "",
@@ -28,6 +29,7 @@ export default function CheckOut() {
   })
 
   const [position, setPosition] = useState<[number, number] | null>(null)
+  const [payment,setPayment] = useState<"cod" | "online">("cod")
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -80,6 +82,9 @@ export default function CheckOut() {
   return (
     <div className="min-h-screen bg-purple-50 p-4 sm:p-12">
       <h1 className='text-center text-5xl text-purple-500 mb-5 font-bold'>Check Out</h1>
+      <div className='grid md:grid-cols-2 gap-8' >
+
+      
       <div className="max-w-2xl mx-auto lg:ml-0 bg-white p-8 rounded-[32px] shadow-sm">
         <h2 className="flex items-center gap-2 font-black text-gray-900 uppercase tracking-tight mb-8 text-xl">
           <MapPin size={24} className="text-purple-600" /> Delivery Address
@@ -174,6 +179,67 @@ export default function CheckOut() {
 
         </form>
       </div>
+      <div className="lg:ml-0 bg-white p-8 rounded-[32px] shadow-sm flex flex-col">
+  <h1 className="text-3xl text-gray-800 mb-4 flex items-center gap-2">
+    <CreditCard className="text-purple-600" size={25} />
+    Payment Method
+  </h1>
+
+  <div className="mb-6 flex flex-col space-y-6">
+    <button onClick={() => setPayment("online")}
+      className={`flex items-center border border-purple-100  gap-3 w-full  rounded-lg p-3 transition-all ${
+        payment === "online"
+          ? "border-purple-600 bg-purple-100 shadow-sm"
+          : "hover:bg-gray-100"
+      }`}
+    >
+      <WalletCards className='text-purple-500' size={20} />
+      <span>Pay Online</span>
+    </button>
+
+    <button onClick={() => setPayment("cod")}
+      className={`flex items-center border border-purple-100 gap-3 w-full  rounded-lg p-3 transition-all ${
+        payment === "cod"
+          ? "border-purple-600 bg-purple-100 shadow-sm"
+          : "hover:bg-gray-100"
+      }`}
+    >
+      <Truck className='text-purple-500' size={20} />
+      <span>cash on delivery</span>
+    </button>
+ <div className='space-y-4 text-sm'>
+                 <div className='flex justify-between text-gray-500'>
+                   <span>Subtotal</span>
+                   <span className='flex items-center font-semibold text-gray-800'>
+                     <IndianRupee size={12} /> {subTotal}
+                   </span>
+                 </div>
+                 <div className='flex justify-between text-gray-500'>
+                   <span>Delivery Fee</span>
+                   <span className='flex items-center font-semibold text-green-600'>
+                     {deliveryFee === 0 ? 'FREE' : <><IndianRupee size={12} /> {deliveryFee}</>}
+                   </span>
+                 </div>
+                 
+                 <div className='border-t border-gray-100 pt-4 mt-4'>
+                   <div className='flex justify-between items-end'>
+                     <span className='text-base font-bold text-gray-800'>Total Amount</span>
+                     <span className='text-2xl font-black text-purple-600 flex items-center'>
+                       <IndianRupee size={20} /> {finalTotal}
+                     </span>
+                   </div>
+                 </div>
+
+                
+       
+
+  </div>
+
+
+</div>
+
+    </div>
+    </div>
     </div>
   )
 }
