@@ -7,6 +7,7 @@ import { MapContainer, Marker, TileLayer } from 'react-leaflet'
 import L, { LatLngExpression } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import axios from 'axios'
+import { useRouter } from 'next/navigation'
 
 const markerIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/128/149/149059.png",
@@ -17,6 +18,8 @@ const markerIcon = new L.Icon({
 export default function CheckOut() {
   const { userData } = useSelector((state: RootState) => state.user)
   const { subTotal, deliveryFee, finalTotal, cartData } = useSelector((state: RootState) => state.cart)
+
+  const router = useRouter()
 
   const [address, setAddress] = useState({
     fullName: "",
@@ -95,8 +98,9 @@ export default function CheckOut() {
         longitude: position[1],
       }
     });
-    alert("Order Placed!");
     console.log(result.data)
+    window.location.href = "/order-success"
+
   } catch (error) {
     console.log("Order Error:", error.response?.data || error);
   }

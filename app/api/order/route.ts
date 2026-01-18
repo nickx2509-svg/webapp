@@ -11,9 +11,11 @@ export async function POST(req: NextRequest) {
     const session = await auth();
     console.log("Session User:", session?.user?.email);
 
-    // If session is null, it might be the reason for the 500 error
     if (!session) {
-      console.log("Error: No Session Found");
+      return NextResponse.json(
+        { success: false, message: "Unauthorised" },
+        { status: 401 },
+      );
     }
 
     const body = await req.json();
@@ -21,9 +23,7 @@ export async function POST(req: NextRequest) {
 
     const { userId, groceery, paymentType, totalAmount, address } = body;
 
-    // Check if any field is empty before trying to save
     if (!userId || !groceery || !paymentType || !totalAmount || !address) {
-      console.log("Validation Failed: Missing Fields");
       return NextResponse.json(
         { success: false, message: "Missing fields" },
         { status: 400 },
@@ -39,19 +39,28 @@ export async function POST(req: NextRequest) {
     });
 
     console.log("Order Saved Successfully!");
-    return NextResponse.json(
+
+    // ✅ SET COOKIE ON SUCCESS
+    const response = NextResponse.json(
       { success: true, data: newOrder },
       { status: 201 },
     );
+
+    response.cookies.set("order-success", "true", {
+      httpOnly: true,
+      path: "/", // 🚨 MUST
+      maxAge: 60*3,
+    });
+
+    return response;
   } catch (error: any) {
-    // THIS IS THE MOST IMPORTANT PART
     console.error("DETAILED MONGODB ERROR:", error.message);
 
     return NextResponse.json(
       {
         success: false,
         message: "Internal Server Error",
-        errorDetails: error.message, // This will show you exactly what is wrong in the browser console
+        errorDetails: error.message,
       },
       { status: 500 },
     );

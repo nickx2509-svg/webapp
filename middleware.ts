@@ -4,17 +4,26 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Public routes
-  const publicRoutes = [
-    "/login",
-    "/register",
-    "/api/auth",
-    "/_next",
-    "/favicon.ico",
-  ];
+  const publicRoutes = ["/login", "/register", "/unauthorised"];
 
   if (publicRoutes.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
+  }
+
+  if (pathname === "/order-success") {
+    const orderSuccessCookie = req.cookies.get("order-success");
+
+    if (!orderSuccessCookie) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    // 🔥 DELETE COOKIE AFTER FIRST VALID ACCESS
+    const response = NextResponse.next();
+    response.cookies.set("order-success", "", {
+      path: "/",
+      maxAge: 0,
+    });
+    return response;
   }
 
   const token = await getToken({
@@ -22,7 +31,6 @@ export async function middleware(req: NextRequest) {
     secret: process.env.AUTH_SECRET,
   });
 
-  // 🔐 Not logged in → redirect to login
   if (!token) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
@@ -31,17 +39,14 @@ export async function middleware(req: NextRequest) {
 
   const role = token.role;
 
-  // 🧑 User routes
   if (pathname.startsWith("/user") && role !== "user") {
     return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
 
-  // 🚚 Delivery routes
   if (pathname.startsWith("/deliver") && role !== "deliveryBoy") {
     return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
 
-  // 🛠 Admin routes
   if (pathname.startsWith("/admin") && role !== "admin") {
     return NextResponse.redirect(new URL("/unauthorised", req.url));
   }
