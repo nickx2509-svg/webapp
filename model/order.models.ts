@@ -12,6 +12,7 @@ interface orderI {
     image: string;
   }[]; // Defined as an array of objects
   totalAmount: string;
+  isPaid?: "true" | "false";
   paymentType: "cod" | "online";
   address: {
     fullName: string;
@@ -50,6 +51,11 @@ const orderSchema = new mongoose.Schema(
     totalAmount: {
       type: String,
       required: [true, "Total amount is required"],
+    },
+    isPaid: {
+      type: String,
+      enum: ["true", "false"],
+      default: "false",
     },
     paymentType: {
       type: String,

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import connectDB from "@/lib/db";
 import Order from "@/model/order.models";
+import User from "@/model/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -30,6 +31,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
     const newOrder = await Order.create({
       user: userId,
       groceery,
@@ -49,7 +55,7 @@ export async function POST(req: NextRequest) {
     response.cookies.set("order-success", "true", {
       httpOnly: true,
       path: "/", // 🚨 MUST
-      maxAge: 60*3,
+      maxAge: 60 * 3,
     });
 
     return response;

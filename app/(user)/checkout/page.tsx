@@ -105,7 +105,40 @@ export default function CheckOut() {
     console.log("Order Error:", error.response?.data || error);
   }
 };
-  const handleOnline = () => alert("Online payment integration coming soon!")
+  const handleOnline = async () => {
+ if (!position) return;
+  try {
+    const result = await axios.post('/api/payment',{
+      userId: userData?.data._id,
+      groceery: cartData.map((item) => ({ // CHANGE THIS FROM 'items' TO 'groceery'
+        item: item._id, 
+        name: item.name,
+        unit: item.unit,
+        quantity: item.quantity,
+        price: item,
+        image: item.image
+      })),
+      paymentType: "online",
+      totalAmount: finalTotal, // Use 'totalAmount' with an 'n'
+      address: {               // Use 'address' with two 'd's
+        fullName: address.fullName,
+        mobile: address.mobile,
+        city: address.city,
+        pincode: Number(address.pincode),
+        fullAddress: address.fullAddress,
+        latitude: position[0],
+        longitude: position[1],
+      }
+    })
+    window.location.href = result.data.url
+  } catch (error) {
+    console.log(error)
+  }
+
+  }
+
+
+
 
   return (
     <div className="min-h-screen bg-purple-50 p-4 sm:p-12">
