@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 // Interface for TypeScript type checking
 export interface orderI {
+  _id?: mongoose.Types.ObjectId | null;
   user: mongoose.Types.ObjectId;
   groceery: {
     item: mongoose.Types.ObjectId;
