@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import connectDB from "@/lib/db";
 import Order from "@/model/order.models";
 import User from "@/model/user.model";
+import { ApiError } from "@/utils/ApiError";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
