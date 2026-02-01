@@ -24,6 +24,8 @@ export interface orderI {
     latitude: number;
     longitude: number;
   };
+  assignment?: mongoose.Types.ObjectId;
+  assignedDeliverBoy?: mongoose.Types.ObjectId;
   status: "pending" | "out of delivered" | "delivered";
 }
 
@@ -76,6 +78,14 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "out of delivered", "delivered"],
       default: "pending",
+    },
+    assignedDeliverBoy: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+    },
+    assignment: {
+      type: mongoose.Types.ObjectId,
+      ref: "Delivery",
     },
   },
   { timestamps: true },

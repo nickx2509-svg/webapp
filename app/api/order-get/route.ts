@@ -8,17 +8,9 @@ import { NextRequest, NextResponse } from "next/server";
 export const GET = asyncHandler(async (req: NextRequest) => {
   await connectDB();
   const session = await auth();
-  const orders = await Order.find({user:session?.user?.id}).populate("user")
-  if(!orders){
-    return NextResponse.json(
-      {message:"Orders not found"},
-      { status:400}
-    )
+  const orders = await Order.find({ user: session?.user?.id }).populate("user");
+  if (!orders) {
+    return NextResponse.json({ message: "Orders not found" }, { status: 400 });
   }
-  return NextResponse.json(
-    {orders}
-  )
-
-
-
+  return NextResponse.json({ orders }, { status: 201 });
 });
