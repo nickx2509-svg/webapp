@@ -8,6 +8,17 @@ interface UserI extends Document {
   mobile?: string;
   role: "user" | "deliveryBoy" | "admin";
   image?: string;
+  location: {
+    type: {
+      type: StringConstructor;
+      enum: string[];
+      default: string;
+    };
+    coordinate: {
+      type: NumberConstructor[];
+      default: number[];
+    };
+  };
 }
 
 const UserSchema = new Schema<UserI>(
@@ -37,10 +48,21 @@ const UserSchema = new Schema<UserI>(
     image: {
       type: String,
     },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinate: {
+        type: [Number],
+        default: [0, 0],
+      },
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-
+UserSchema.index({ location: "2dsphere" });
 UserSchema.pre("save", async function () {
   if (!this.isModified("password")) {
     return;
