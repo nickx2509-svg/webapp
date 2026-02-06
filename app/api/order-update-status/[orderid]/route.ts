@@ -9,18 +9,15 @@ export const POST = async (
   try {
     await connectDB();
     const { orderid } = await params;
-    const {status} = await req.json();
-    const order = await Order.findById(orderid).populate("user")
-    if(!order){
-      return NextResponse.json(
-        { error:"Order not found"},
-        { status: 400}
-      )
+    const { status } = await req.json();
+    const order = await Order.findById(orderid).populate("user");
+    if (!order) {
+      return NextResponse.json({ error: "Order not found" }, { status: 400 });
     }
-    order.status = status
+    order.status = status;
 
-    let availableDeliveryBoy:any = []
-    if()
-
+    let availableDeliveryBoy: any = [];
+    if (status === "out of deliver" && !order.assignment) {
+    }
   } catch (error) {}
 };

@@ -8,6 +8,8 @@ interface UserI extends Document {
   mobile?: string;
   role: "user" | "deliveryBoy" | "admin";
   image?: string;
+  Socket: string | null;
+  isOnline: boolean;
   location: {
     type: {
       type: StringConstructor;
@@ -47,6 +49,14 @@ const UserSchema = new Schema<UserI>(
     },
     image: {
       type: String,
+    },
+    Socket: {
+      type: String,
+      default: null,
+    },
+    isOnline: {
+      type: Boolean,
+      default: false,
     },
     location: {
       type: {

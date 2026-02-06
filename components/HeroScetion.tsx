@@ -1,11 +1,16 @@
-"use client"
+"use client";
 
-import { motion, AnimatePresence } from "motion/react"
-import { Leaf, Shirt, Smartphone } from "lucide-react"
-import { useEffect, useState } from "react"
-import Image from "next/image"
+import { motion, AnimatePresence } from "motion/react";
+import { Leaf, Shirt, Smartphone } from "lucide-react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { getSocket } from "@/lib/socket";
 
 function HeroScetion() {
+  useEffect(() => {
+    const socket = getSocket();
+  }, []);
+
   const slides = [
     {
       id: 1,
@@ -31,19 +36,19 @@ function HeroScetion() {
       btnText: "Buy Electronics",
       bg: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80",
     },
-  ]
+  ];
 
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length)
-    }, 5000)
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 5000);
 
-    return () => clearInterval(timer)
-  }, [slides.length])
+    return () => clearInterval(timer);
+  }, [slides.length]);
 
-  const Icon = slides[current].icon
+  const Icon = slides[current].icon;
 
   return (
     <div className="relative w-[98%] mx-auto mt-32 h-[80vh] rounded-3xl overflow-hidden shadow-2xl">
@@ -99,9 +104,7 @@ function HeroScetion() {
                            text-white font-semibold text-lg overflow-hidden"
               >
                 <span className="absolute inset-0 rounded-full bg-purple-400/40 blur-xl opacity-0 hover:opacity-100 transition" />
-                <span className="relative z-10">
-                  {slides[current].btnText}
-                </span>
+                <span className="relative z-10">{slides[current].btnText}</span>
               </motion.button>
             </motion.div>
           </div>
@@ -129,7 +132,7 @@ function HeroScetion() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-export default HeroScetion
+export default HeroScetion;
